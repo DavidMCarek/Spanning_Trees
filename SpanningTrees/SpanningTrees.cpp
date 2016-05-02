@@ -10,6 +10,8 @@
 
 using namespace std;
 
+std::string strFix(std::string in, int length);
+
 int main()
 {
 	string inputFilePath = "C:\\Users\\DMCar\\Desktop\\input.txt";
@@ -67,39 +69,52 @@ int main()
 		}
 			
 	}
-		
+
 	int row = 0;
 	int col = 0;
 	string strVal = "";
-	int edgeCount;
+	double val = 0;
+	int edgeCount = 0;
 
-	while ((row < n) && (col < n))
+	while (true)
 	{
 		inputStream.get(ch);
 		nextChar = &ch;
+
+		if (inputStream.eof())
+			break;
 		
 		if (*nextChar == 32) // if next char is a space 
 		{
-			if (stod(strVal) != 0)
-				edgeCount++;
+			if (strVal != "")
+			{
+				val = stod(strVal);
+				if (val != 0)
+					edgeCount++;
 
-			adjacenyMatrix[row][col] = stod(strVal);
-			col++;
-			strVal = "";
+				adjacenyMatrix[row][col] = val;
+
+				col++;
+				strVal = "";
+			}
+			
 		}
 		else if (*nextChar == 10 || *nextChar == 13)
 		{
-			if (strVal.length() != 0)
+			if (strVal != "")
 			{
-				if (stod(strVal) != 0)
+				val = stod(strVal);
+
+				if (val != 0)
 					edgeCount++;
 
-				adjacenyMatrix[row][col] = stod(strVal);
+				adjacenyMatrix[row][col] = val;
 				strVal = "";
+			
+				row++;
+				col = 0;
 			}
-
-			row++;
-			col = 0;
+			
 		}
 		else
 		{
@@ -107,13 +122,13 @@ int main()
 		}
 	}
 
+	if (strVal != "")
+	{
+		adjacenyMatrix[n - 1][n - 1] = stod(strVal);
+	}
+
 	Kruskal kruskal(n);
 	kruskal.buildEdges(adjacenyMatrix, nodes, edgeCount, n);
-
-	for (int i = 0; i < n; i++)
-	{
-		kruskal.makeSet(strFix(nodes[i].name, nodes[i].length));
-	}
 
 	int numberOfEdgesUsed = 0;
 
@@ -144,4 +159,14 @@ int main()
 	delete adjacenyMatrix;
 
     return 0;
+}
+
+std::string strFix(std::string in, int length)
+{
+	std::string out = "";
+	for (int i = 0; i < length; i++)
+	{
+		out.push_back(in[i]);
+	}
+	return out;
 }

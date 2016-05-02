@@ -21,6 +21,7 @@ public:
 	bool fullTree = false;
 	void printTree(int edgesUsed);
 private:
+	std::string strFix(std::string in, int length);
 	int edgeCount;
 	int setSize;
 	int setCount = 0;
