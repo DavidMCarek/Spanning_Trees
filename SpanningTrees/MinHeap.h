@@ -4,7 +4,7 @@
 class MinHeap
 {
 public:
-	MinHeap();
+	MinHeap(int heapSize);
 	~MinHeap();
 	void insert(std::string input);
 private:
@@ -13,6 +13,6 @@ private:
 		Node * leftChild = nullptr;
 		Node * rightChild = nullptr;
 	};
-	Node * root = nullptr;
+	Node * heap;
 };
 

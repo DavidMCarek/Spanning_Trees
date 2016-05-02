@@ -12,6 +12,12 @@ using namespace std;
 
 std::string strFix(std::string in, int length);
 
+struct HeapNode
+{
+	string key;
+	double weight;
+};
+
 int main()
 {
 	string inputFilePath = "C:\\Users\\DMCar\\Desktop\\input.txt";
@@ -31,17 +37,14 @@ int main()
 	}
 
 	int numberOfNodes = 0;
-	char * nextChar = 0;
-	char ch;
+	char nextChar = 0;
 	string input = "";
 
-	inputStream.get(ch);
-	nextChar = &ch;
-	while (*nextChar != 10 && *nextChar != 13 && *nextChar != 32)
+	inputStream.get(nextChar);
+	while (nextChar != 10 && nextChar != 13 && nextChar != 32)
 	{
-		input.append(nextChar);
-		inputStream.get(ch);
-		nextChar = &ch;
+		input.push_back(nextChar);
+		inputStream.get(nextChar);
 	}
 
 	int n = stoi(input);
@@ -55,16 +58,15 @@ int main()
 
 	while (index < n)
 	{
-		inputStream.get(ch);
-		nextChar = &ch;
-		if (*nextChar == 10 || *nextChar == 13 || *nextChar == 32)
+		inputStream.get(nextChar);
+		if (nextChar == 10 || nextChar == 13 || nextChar == 32)
 		{
 			if (nodes[index].name.length() != 0)
 				index++;
 		}
 		else
 		{
-			nodes[index].name.append(nextChar);
+			nodes[index].name.push_back(nextChar);
 			nodes[index].length++;
 		}
 			
@@ -78,13 +80,12 @@ int main()
 
 	while (true)
 	{
-		inputStream.get(ch);
-		nextChar = &ch;
+		inputStream.get(nextChar);
 
 		if (inputStream.eof())
 			break;
 		
-		if (*nextChar == 32) // if next char is a space 
+		if (nextChar == 32) // if next char is a space 
 		{
 			if (strVal != "")
 			{
@@ -99,7 +100,7 @@ int main()
 			}
 			
 		}
-		else if (*nextChar == 10 || *nextChar == 13)
+		else if (nextChar == 10 || nextChar == 13)
 		{
 			if (strVal != "")
 			{
@@ -118,9 +119,11 @@ int main()
 		}
 		else
 		{
-			strVal.append(nextChar);
+			strVal.push_back(nextChar);
 		}
 	}
+
+	edgeCount = edgeCount / 2;
 
 	if (strVal != "")
 	{
@@ -132,6 +135,9 @@ int main()
 
 	int numberOfEdgesUsed = 0;
 
+	for (int i = 0; i < n; i++)
+		kruskal.makeSet(strFix(nodes[i].name, nodes[i].length));
+
 	for (int i = 0; i < edgeCount; i++)
 	{
 		int setIndex1 = kruskal.findSetIndex(kruskal.edges[i].vertex1);
@@ -139,6 +145,7 @@ int main()
 		if (setIndex1 != setIndex2)
 		{
 			kruskal.unionSets(setIndex1, setIndex2);
+			kruskal.addTreeEdge(kruskal.edges[i].vertex1, kruskal.edges[i].vertex2);
 			numberOfEdgesUsed++;
 		}
 		if (kruskal.fullTree)
@@ -148,15 +155,18 @@ int main()
 		}
 	}
 
+	cout << "Kruskal's Algorithm" << endl;
 	kruskal.printTree(numberOfEdgesUsed);
+
+
+	
+
+	
+
+
 
 	
 	inputStream.close();
-
-	delete nodes;
-	for (int i = 0; i >= n; i++)
-		delete adjacenyMatrix[i];
-	delete adjacenyMatrix;
 
     return 0;
 }

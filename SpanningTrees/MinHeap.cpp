@@ -2,8 +2,9 @@
 #include "MinHeap.h"
 #include <string>
 
-MinHeap::MinHeap()
+MinHeap::MinHeap(int heapSize)
 {
+	heap = new Node[heapSize];
 }
 
 

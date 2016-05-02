@@ -20,7 +20,10 @@ public:
 	void unionSets(int index1, int index2);
 	bool fullTree = false;
 	void printTree(int edgesUsed);
+	void addTreeEdge(std::string vertex1, std::string vertex2);
 private:
+	Edge * treeEdges;
+	int finalEdges = 0;
 	std::string strFix(std::string in, int length);
 	int edgeCount;
 	int setSize;
