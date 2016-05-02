@@ -14,7 +14,7 @@ Kruskal::~Kruskal()
 {
 }
 
-void Kruskal::buildEdges(double ** adjacencyMatrix, Node * nodes, int edgeCount, int nodeCount)
+void Kruskal::buildEdges(double ** adjacencyMatrix, Vertex * vertices, int edgeCount, int nodeCount)
 {
 	this->edgeCount = edgeCount;
 
@@ -35,15 +35,15 @@ void Kruskal::buildEdges(double ** adjacencyMatrix, Node * nodes, int edgeCount,
 				Edge edge;
 				edge.weight = adjacencyMatrix[i][j];
 				
-				if (nodes[i].name.compare(nodes[j].name) < 0)
+				if (vertices[i].name.compare(vertices[j].name) < 0)
 				{
-					edge.vertex1 = strFix(nodes[i].name, nodes[i].length);
-					edge.vertex2 = strFix(nodes[j].name, nodes[j].length);
+					edge.vertex1 = vertices[i].name;
+					edge.vertex2 =vertices[j].name;
 				}
 				else
 				{
-					edge.vertex1 = strFix(nodes[j].name, nodes[j].length);
-					edge.vertex2 = strFix(nodes[i].name, nodes[i].length);
+					edge.vertex1 = vertices[j].name;
+					edge.vertex2 =vertices[i].name;
 				}
 
 				edges[edgeIndex] = edge;
@@ -154,14 +154,4 @@ void Kruskal::printTree(int edgesUsed)
 	}
 
 	std::cout << weight << std::endl;
-}
-
-std::string Kruskal::strFix(std::string in, int length)
-{
-	std::string out = "";
-	for (int i = 0; i < length; i++)
-	{
-		out.push_back(in[i]);
-	}
-	return out;
 }

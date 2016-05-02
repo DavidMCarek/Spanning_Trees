@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
+// this header contains structs common to all files in solution
 
-struct Node {
+struct Vertex {
 	std::string name;
 	int length = 0;
 };

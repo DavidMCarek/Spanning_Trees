@@ -7,7 +7,7 @@ class Kruskal
 public:
 	Kruskal(int setSize);
 	~Kruskal();
-	void buildEdges(double ** adjacencyMatrix, Node * nodes, int edgeCount, int nodeCount);
+	void buildEdges(double ** adjacencyMatrix, Vertex * vertices, int edgeCount, int nodeCount);
 	void makeSet(std::string vertex);
 	int findSetIndex(std::string vertex);
 	Edge * edges;
@@ -19,7 +19,6 @@ public:
 private:
 	Edge * treeEdges;
 	int finalEdges = 0;
-	std::string strFix(std::string in, int length);
 	int edgeCount;
 	int setSize;
 	int setCount = 0;
