@@ -242,16 +242,25 @@ int main()
 					vertex2.weight = minHeap[heapLocation].weight;
 					double weight = adjacenyMatrix[vertex1.key][vertex2.key];
 
-					// only edit the vertex in the heap if the weight just discovered for it is less than  
+					// only edit the vertex in the heap if the weight just discovered for it is less than 
+					// its previous weight in the heap
 					if (weight < vertex2.weight)
 					{
 						vertex2.parent = vertex1.key;
 						vertex2.weight = adjacenyMatrix[vertex1.key][vertex2.key];
 						for (int j = 1; j <= numberOfNodes; j++)
+							// save the corresponding vertex to the heap and fix the heap after the changes
 							if (minHeap[j].key == vertex2.key)
 							{
 								minHeap[j] = vertex2;
-								minHeapify(minHeap, 1, heapSize);
+								// since the node changed might be in the middle of the tree we need to run min heapify
+								// to fix anything below and above. so we keep going up the heap to fix potential messups
+								int heapPosition = j;
+								while (heapPosition > 0)
+								{
+									minHeapify(minHeap, heapPosition, heapSize);
+									heapPosition = floor(heapPosition / 2.0);
+								}
 								break;
 							}
 					}
@@ -260,9 +269,11 @@ int main()
 		}
 	}
 
-
 	numberOfEdgesUsed = 0;
 	Edge * edges = new Edge[numberOfNodes - 1];
+	
+	// for each vertex that has a parent after prim's has run create edges using the vertex key
+	// and parent to get the name of the vertices that make the edge
 	for (int i = 0; i < numberOfNodes; i++)
 	{
 		if (minHeap[i + 1].parent != -1)
@@ -285,6 +296,7 @@ int main()
 
 	Edge tempEdge;
 
+	// use bubble sort to alphabetize edges
 	for (int passes = 0; passes < numberOfEdgesUsed - 1; passes++)
 		for (int i = 1; i < numberOfEdgesUsed; i++)
 		{
@@ -296,6 +308,7 @@ int main()
 			}
 		}
 
+	// print out the edges while calculating the weight of the tree
 	double weight = 0;
 	for (int i = 0; i < numberOfEdgesUsed; i++)
 	{
@@ -313,6 +326,7 @@ int main()
     return 0;
 }
 
+// returns the location of the key in the heap. -1 if not found
 int isInHeap(int key, int heapSize, HeapNode * heap)
 {
 	for (int i = 1; i <= heapSize; i++)
@@ -322,12 +336,16 @@ int isInHeap(int key, int heapSize, HeapNode * heap)
 	return -1;
 }
 
+// recursively corrects the min heap
 void minHeapify(HeapNode * heap, int heapPosition, int heapSize)
 {
+	// set the left and right children of the current node
 	int left = (heapPosition * 2);
 	int right = (heapPosition * 2) + 1;
 
 	int min;
+
+	// get the minimum of the three nodes
 	if (left <= heapSize && heap[left].weight < heap[heapPosition].weight)
 		min = left;
 	else 
@@ -336,6 +354,8 @@ void minHeapify(HeapNode * heap, int heapPosition, int heapSize)
 	if (right <= heapSize && heap[right].weight < heap[min].weight)
 		min = right;
 	
+	// if the min wasn't at the root of the sub heap swap the root with the min and then call
+	// heapify again
 	if (min != heapPosition)
 	{
 		HeapNode tempNode;
@@ -346,11 +366,15 @@ void minHeapify(HeapNode * heap, int heapPosition, int heapSize)
 	}
 }
 
+// retrieve the smallest weight node in the heap 
 HeapNode extractMin(HeapNode * heap, double ** adjacencyMatrix, int heapSize)
 {
+	// the first item is the min
 	HeapNode min = heap[1];
+	// swap the min and the last position
 	heap[1] = heap[heapSize];
 	heap[heapSize] = min;
+	// decrease the heap size
 	heapSize--;
 	minHeapify(heap, 1, heapSize);
 	return min;

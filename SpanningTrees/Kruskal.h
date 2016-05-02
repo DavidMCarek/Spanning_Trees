@@ -2,6 +2,8 @@
 #include <string>
 #include "global.h"
 
+// this class is used to run kruskals algorithm
+
 class Kruskal
 {
 public:
