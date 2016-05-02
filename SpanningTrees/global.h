@@ -9,3 +9,9 @@ struct Node {
 struct Set {
 	std::string * keys;
 };
+
+struct Edge {
+	std::string vertex1;
+	std::string vertex2;
+	double weight;
+};

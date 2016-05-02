@@ -14,9 +14,14 @@ std::string strFix(std::string in, int length);
 
 struct HeapNode
 {
-	string key;
+	int key;
 	double weight;
+	int parent;
 };
+
+int isInHeap(int key, int heapSize, HeapNode * heap);
+HeapNode extractMin(HeapNode * heap, double ** adjacencyMatrix, int heapSize);
+void minHeapify(HeapNode * heap, int heapPosition, int heapSize);
 
 int main()
 {
@@ -157,15 +162,105 @@ int main()
 
 	cout << "Kruskal's Algorithm" << endl;
 	kruskal.printTree(numberOfEdgesUsed);
-
-
-	
+	cout << endl << "Prim's Algorithm" << endl;
 
 	
 
+	HeapNode * minHeap = new HeapNode[n + 1];
+	int heapSize = 0;
+
+	for (int i = 1; i <= n; i++)
+	{
+		minHeap[i].key = i - 1;
+		minHeap[i].weight = DBL_MAX;
+		minHeap[i].parent = -1;
+		heapSize++;
+	}
+
+	minHeap[1].weight = 0;
+
+	HeapNode vertex1;
+	HeapNode vertex2;
+
+	while (heapSize > 0)
+	{
+		vertex1 = extractMin(minHeap, adjacenyMatrix, heapSize);
+
+		heapSize--;
+		for (int i = 0; i < n; i++)
+		{
+			if (adjacenyMatrix[vertex1.key][i] != 0)
+			{
+				vertex2.key = i;
+				int heapLocation = isInHeap(vertex2.key, heapSize, minHeap);
+				if (heapLocation > -1)
+				{
+					vertex2.weight = minHeap[heapLocation].weight;
+					double weight = adjacenyMatrix[vertex1.key][vertex2.key];
+					if (weight < vertex2.weight)
+					{
+						vertex2.parent = vertex1.key;
+						vertex2.weight = adjacenyMatrix[vertex1.key][vertex2.key];
+						for (int j = 1; j <= n; j++)
+							if (minHeap[j].key == vertex2.key)
+							{
+								minHeap[j] = vertex2;
+								minHeapify(minHeap, 1, heapSize);
+							}
+					}
+				}
+			}
+		}
+	}
 
 
+	numberOfEdgesUsed = 0;
+	Edge * edges = new Edge[n - 1];
+	for (int i = 0; i < n; i++)
+	{
+		if (minHeap[i + 1].parent != -1)
+		{
+			Edge edge;
+			edge.vertex1 = strFix(nodes[minHeap[i + 1].key].name, nodes[minHeap[i + 1].key].length);
+			edge.vertex2 = strFix(nodes[minHeap[i + 1].parent].name, nodes[minHeap[i + 1].parent].length);
+			if (edge.vertex1 > edge.vertex2)
+			{
+				string tempStr = edge.vertex1;
+				edge.vertex1 = edge.vertex2;
+				edge.vertex2 = tempStr;
+			}
+
+			edge.weight = minHeap[i + 1].weight;
+			edges[numberOfEdgesUsed] = edge;
+			numberOfEdgesUsed++;
+		}
+	}
+
+	Edge tempEdge;
+
+	for (int passes = 0; passes < numberOfEdgesUsed - 1; passes++)
+		for (int i = 1; i < numberOfEdgesUsed; i++)
+		{
+			if ((edges[i].vertex1 + edges[i].vertex2) < (edges[i - 1].vertex1 + edges[i - 1].vertex2))
+			{
+				tempEdge = edges[i];
+				edges[i] = edges[i - 1];
+				edges[i - 1] = tempEdge;
+			}
+		}
+
+	double weight = 0;
+	for (int i = 0; i < numberOfEdgesUsed; i++)
+	{
+		weight += edges[i].weight;
+		std::cout << edges[i].vertex1 << " - " << edges[i].vertex2 << " : " << edges[i].weight << std::endl;
+	}
+
+	cout << weight << endl << endl;
 	
+	cout << "Processing finished. Press ENTER to exit" << endl;
+	char waitChar;
+	cin.get(waitChar);
 	inputStream.close();
 
     return 0;
@@ -179,4 +274,47 @@ std::string strFix(std::string in, int length)
 		out.push_back(in[i]);
 	}
 	return out;
+}
+
+int isInHeap(int key, int heapSize, HeapNode * heap)
+{
+	for (int i = 1; i <= heapSize; i++)
+		if (heap[i].key == key)
+			return i;
+
+	return -1;
+}
+
+void minHeapify(HeapNode * heap, int heapPosition, int heapSize)
+{
+	int left = (heapPosition * 2);
+	int right = (heapPosition * 2) + 1;
+
+	int min;
+	if (left <= heapSize && heap[left].weight < heap[heapPosition].weight)
+		min = left;
+	else 
+		min = heapPosition;
+
+	if (right <= heapSize && heap[right].weight < heap[min].weight)
+		min = right;
+	
+	if (min != heapPosition)
+	{
+		HeapNode tempNode;
+		tempNode = heap[heapPosition];
+		heap[heapPosition] = heap[min];
+		heap[min] = tempNode;
+		minHeapify(heap, min + 1, heapSize);
+	}
+}
+
+HeapNode extractMin(HeapNode * heap, double ** adjacencyMatrix, int heapSize)
+{
+	HeapNode min = heap[1];
+	heap[1] = heap[heapSize];
+	heap[heapSize] = min;
+	heapSize--;
+	minHeapify(heap, 1, heapSize);
+	return min;
 }

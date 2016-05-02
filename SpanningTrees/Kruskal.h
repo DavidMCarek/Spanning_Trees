@@ -10,11 +10,6 @@ public:
 	void buildEdges(double ** adjacencyMatrix, Node * nodes, int edgeCount, int nodeCount);
 	void makeSet(std::string vertex);
 	int findSetIndex(std::string vertex);
-	struct Edge {
-		std::string vertex1;
-		std::string vertex2;
-		double weight;
-	};
 	Edge * edges;
 	Set * sets;
 	void unionSets(int index1, int index2);
